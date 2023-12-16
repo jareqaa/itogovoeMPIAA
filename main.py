@@ -6,12 +6,11 @@ from tkinter import *
 from tkinter import ttk
 import tkinter.messagebox as mb
 
-
 start = []
 end = []
 obstacles = []
 maxIt = 500
-maxCoordX = 900
+maxCoordX = 700
 maxCoordY = 650
 mas = []
 
@@ -31,7 +30,6 @@ def MinNode(g, node):
 
 
 def Colides(obstacles, currentNode, minNode):
-    # print('\n')
     for obstacle in obstacles:
 
         if Distance(obstacle[0], currentNode) <= obstacle[1] + obstacle[1] / 10:
@@ -106,7 +104,6 @@ def HasMin(currentNode, minNode, graph):
     minDist = dist
     minToRep = []
     for u, v in graph.edges():
-        # print(u, v)
         t = (u[0] * (u[0] - v[0]) + u[1] * (u[1] - v[1]) - currentNode[0] * (u[0] - v[0]) - currentNode[1] * (
                 u[1] - v[1])) / (-(u[1] - v[1]) ** 2 - (u[0] - v[0]) ** 2)
         newNode = ((u[0] + t * (u[0] - v[0])), (u[1] + t * (u[1] - v[1])))
@@ -118,10 +115,7 @@ def HasMin(currentNode, minNode, graph):
             newNode[0] - 1, newNode[1] - 1, currentNode[0], currentNode[1], u[0],
             u[1], v[0], v[1])):
             newDist = Distance(newNode, currentNode)
-            # if newNode[0] > 0 and newNode[1] > 0:
-            # print(newNode, minNode, currentNode)
             if newDist < minDist:
-                # print(newDist, dist)
                 minDist = newDist
                 minToRep = [newNode, u, v]
 
@@ -164,14 +158,9 @@ def RRT(start, end, obstacles, maxIt, maxX, maxY):
         while currentNode == minNode or Colides(obstacles, currentNode, minNode):
             currentNode = ((newNode[0] - t * (newNode[0] - minNode[0])),
                            (newNode[1] - t * (newNode[1] - minNode[1])))
-            # print(currentNode)
             t = t + 0.01
             if t > 1.02:
-                # print(newNode)
-                # canvas.create_oval(newNode[0] - 3, newNode[1] - 3, newNode[0] + 3, newNode[1] + 3, fill="green")
                 break
-                # canvas.create_oval(minNode[0] - 3, minNode[1] - 3, minNode[0] + 3, minNode[1] + 3,
-                #                    fill="purple")
         g.add_edge(currentNode, minNode, weight=Distance(currentNode, minNode))
     minNode = MinNode(g, en)
     nodes = []
@@ -184,7 +173,6 @@ def RRT(start, end, obstacles, maxIt, maxX, maxY):
         minNode = MinNodeWithOut(g, en, nodes)
     if f:
         g.add_edge(en, minNode, weight=Distance(currentNode, minNode))
-        # print(g.nodes)
         return g
     else:
         return None
@@ -195,16 +183,13 @@ def dijkstra_algorithm(graph, start_node):
 
     shortest_path = {}
 
-
     previous_nodes = {}
-
 
     max_value = sys.maxsize
     for node in unvisited_nodes:
         shortest_path[node] = max_value
 
     shortest_path[start_node] = 0
-
 
     while unvisited_nodes:
 
@@ -214,7 +199,6 @@ def dijkstra_algorithm(graph, start_node):
                 current_min_node = node
             elif shortest_path[node] < shortest_path[current_min_node]:
                 current_min_node = node
-
 
         neighbors = graph.neighbors(current_min_node)
         for neighbor in neighbors:
@@ -247,15 +231,10 @@ def draw_edges():
     maxIt = int(entry.get())
     graph = RRT(start, end, obstacles, maxIt, maxCoordX, maxCoordY)
     if graph is None:
-        # editor = Text()
-        # editor.pack()
-        # editor.insert("1.0", "нет пути")
         mb.showinfo("Маршрут", "нет пути")
     else:
         for u, v in graph.edges:
             canvas.create_line(u[0], u[1], v[0], v[1])
-            # canvas.create_oval(v[0] - 3, v[1] - 3, v[0] + 3, v[1] + 3, fill="yellow")
-            # canvas.create_oval(u[0] - 3, u[1] - 3, u[0] + 3, u[1] + 3, fill="yellow")
         canvas.create_oval(start[0] - 3, start[1] - 3, start[0] + 3, start[1] + 3, fill="red")
         canvas.create_oval(end[0] - 3, end[1] - 3, end[0] + 3, end[1] + 3, fill="purple")
         previous_nodes, shortest_path = dijkstra_algorithm(graph, (start[0], start[1]))
@@ -324,7 +303,7 @@ entry.insert(0, "100")
 canvas = Canvas(bg="white", width=maxCoordX, height=maxCoordY)
 canvas.pack(anchor="nw", expand=1)
 btn = ttk.Button(text="Draw graph", command=draw_edges)
-btn.place(x=maxCoordX + 50, y=maxCoordY - 400, width=120, height=40)  # размещаем кнопку в окне
+btn.place(x=maxCoordX + 50, y=maxCoordY - 400, width=120, height=40)
 btn1 = ttk.Button(text="Save scene", command=save_scene)
 btn1.place(x=maxCoordX + 50, y=maxCoordY - 300, width=120, height=40)
 btn2 = ttk.Button(text="Load scene", command=load_scene)
@@ -348,7 +327,6 @@ def add_conclusion_vertex(event):
 
 
 def add_obstacle(event):
-    # canvas.create_oval(event.x - 3, event.y - 3, event.x + 3, event.y + 3, fill="red")
     mas.append((event.x, event.y))
 
     if len(mas) == 2:
